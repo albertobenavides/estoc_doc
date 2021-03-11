@@ -1,0 +1,6 @@
+Tarea actualizada en:
+https://soccer-bayes.herokuapp.com/
+
+Agregado:
+- Todas las distribuciones toman espacios enteros en el rango [0, 8]
+- Se muestra la distribución exponencial de tiempo esperado entre goles por partido, actualizada por los goles anotados por partido como información posterior del teorema de Bayes
