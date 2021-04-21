@@ -57,6 +57,7 @@ class Agent:
                     p_board[n] = '\033[91m' + 'X' + '\033[0m'
                 elif i == '1':
                     p_board[n] = '\033[94m' + 'O' + '\033[0m'
+            print('Recompsensa por casilla', end = '')
             print("\n {} | {} | {} \n {} | {} | {} \n {} | {} | {} \n".format(p_board[0], p_board[1], p_board[2], p_board[3],p_board[4], p_board[5], p_board[6] , p_board[7], p_board[8]))
         return sample(max_vs, 1)[0]
     
@@ -168,7 +169,7 @@ def game():
         player = '\033[91m' + 'X' + '\033[0m'
         if e.turn % 2 == 1:
             player = '\033[94m' + 'O' + '\033[0m'
-        print('-- JUEGA {} --'.format(player))
+        print('JUEGA {}'.format(player))
         
         if e.human: 
             if e.turn % 2 == 0:
@@ -184,9 +185,9 @@ def game():
         # Se incrementa un turno
         e.reward(t_board = e.board, turn = e.turn, end = True)
         e.turn += 1
-        print(e)
+        print('Jugada', end  = '')
+        print(e, end = '')
         print('-- FIN TURNO {} --\n'.format(e.turn -1))
-        print('')
 
     if input('¿Volver a jugar? S/N: ').lower() == 's':
         game()
