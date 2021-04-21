@@ -2,9 +2,10 @@ import copy
 from random import sample
 
 class Agent:
-    def __init__(self, state = 0, alpha = 0.25):
+    def __init__(self, state = 0, alpha = 0.25, future_plays = 1):
         self.state = state
         self.alpha = alpha
+        self.future_plays = future_plays
     
     def action(self, state, board, i, turn):
         # state recibe estado del juego actual, o sea una instancia de Env
@@ -24,22 +25,18 @@ class Agent:
             # Se eligen por orden las posibles jugadas
             t_board[p] = str(turn % 2)
             # Se calcula la función de valor actual en v como la probabilidad de elegir cierta casilla por la recompensa de la misma
-            # Descomentar el deseado
-            # Puede ser tomando en cuenta que el siguiente será el turno del contringante:
             v = state.reward(t_board = t_board, turn = turn % 2) / len(ps)
-            # O la siguiente jugada del mismo jugador
-            #v = state.reward(t_board = t_board, turn = state.turn) / len(ps)
             # Si hay recursividad pendiente, se hace
             if i > 0:
                 # Se actualiza de manera recursiva
-                v = v + self.alpha * (self.action(state = state, board = t_board, i = i - 1, turn = turn + 1)[1] + v)
-                #v = v + self.alpha * (self.action(state = state, board = t_board, i = i - 1, turn = state.turn)[1] + v)
+                v = v + self.alpha * (self.action(state = state, board = t_board, i = i - 1, turn = turn + 1)[1] - v)
             # Se agrega a la lista la tupla (posibiliad, valor)
             vs.append((p,v))
 
-        if i == 2:
+        if i == self.future_plays:
             p_board = t_board.copy()
         # Se regresa el valor mayor
+        # TODO: Poner menos infinito
         max_vs = [(-1, -1000)]
         for v in vs:
             if v[1] > max_vs[0][1]:
@@ -47,10 +44,10 @@ class Agent:
                 max_vs.append(v)
             elif v[1] == max_vs[0][1]:
                 max_vs.append(v)
-            if i == 2:
+            if i == self.future_plays:
                 # Se agregan las probabilidades
                 p_board[v[0]] = v[1]
-        if i == 2:
+        if i == self.future_plays:
             for n, i in enumerate(p_board):
                 if i == '0':
                     p_board[n] = 'X'
@@ -140,18 +137,17 @@ class Env: # Juego del Gato
         self.board = ['⊔'] * 9
         self.turn = 0
 
-a = Agent()
+a = Agent(future_plays = 2)
 e = Env()
 
-reps = 10
-ts = 10
 while e.playing:
     print('-- TURNO {} --'.format(e.turn))
     player = 'X'
     if e.turn % 2 == 1:
         player = 'O'
     print('-- JUEGA {} --'.format(player))
-    t = a.action(state = e, board = e.board, i = 2, turn = e.turn)
+    # TODO: Si el turno es impar, juega humano
+    t = a.action(state = e, board = e.board, i = a.future_plays, turn = e.turn)
     e.board[t[0]] = str(e.turn % 2)
     # TODO: Revisar si ya se acabó el juego
     # Se incrementa un turno
