@@ -47,12 +47,16 @@ class Agent:
             if i == self.future_plays:
                 # Se agregan las probabilidades
                 p_board[v[0]] = v[1]
+                if turn % 2 == 0:
+                    p_board[v[0]] = '\033[91m' + str(round(p_board[v[0]], 4)) + '\033[0m'
+                else:
+                    p_board[v[0]] = '\033[94m' + str(round(p_board[v[0]], 4)) + '\033[0m'
         if i == self.future_plays:
             for n, i in enumerate(p_board):
                 if i == '0':
-                    p_board[n] = 'X'
+                    p_board[n] = '\033[91m' + 'X' + '\033[0m'
                 elif i == '1':
-                    p_board[n] = 'O'
+                    p_board[n] = '\033[94m' + 'O' + '\033[0m'
             print("\n {} | {} | {} \n {} | {} | {} \n {} | {} | {} \n".format(p_board[0], p_board[1], p_board[2], p_board[3],p_board[4], p_board[5], p_board[6] , p_board[7], p_board[8]))
         return sample(max_vs, 1)[0]
     
@@ -61,12 +65,13 @@ class Agent:
         self.reward = 0
 
 class Env: # Juego del Gato
-    def __init__(self, board = ['⊔'] * 9, turn = 0):
+    def __init__(self, board = ['⊔'] * 9, turn = 0, human = False):
         self.board = board
         self.turn = turn
         self.playing = True
+        self.human = human
 
-    def reward(self, t_board, turn):
+    def reward(self, t_board, turn, end = False):
         # t_board es el tablero con base en las posibles opciones
         # r es la recompensa
         r = 0
@@ -78,18 +83,24 @@ class Env: # Juego del Gato
         
         # Victorias horizontales
         if t_board[0] != '⊔' and t_board[0] == t_board[1] and t_board[0] == t_board[2]:
+            if end:
+                self.playing = False
             if player == t_board[0]:
                 r = 1
             else:
                 r = -1
                 
         elif t_board[3] != '⊔' and t_board[3] == t_board[4] and t_board[3] == t_board[5]:
+            if end:
+                self.playing = False
             if player == t_board[3]:
                 r = 1
             else:
                 r = -1
                 
         elif t_board[6] != '⊔' and t_board[6] == t_board[7] and t_board[6] == t_board[8]:
+            if end:
+                self.playing = False
             if player == t_board[6]:
                 r = 1
             else:
@@ -97,18 +108,24 @@ class Env: # Juego del Gato
             
         # Victorias verticales
         elif t_board[0] != '⊔' and t_board[0] == t_board[3] and t_board[0] == t_board[6]:
+            if end:
+                self.playing = False
             if player == t_board[0]:
                 r = 1
             else:
                 r = -1
                 
         elif t_board[1] != '⊔' and t_board[1] == t_board[4] and t_board[1] == t_board[7]:
+            if end:
+                self.playing = False
             if player == t_board[1]:
                 r = 1
             else:
                 r = -1
                 
         elif t_board[2] != '⊔' and t_board[2] == t_board[5] and t_board[2] == t_board[8]:
+            if end:
+                self.playing = False
             if player == t_board[2]:
                 r = 1
             else:
@@ -116,9 +133,13 @@ class Env: # Juego del Gato
         
         # Victorias diagonales
         elif t_board[0] != '⊔' and t_board[0] == t_board[4] and t_board[0] == t_board[8]:
+            if end:
+                self.playing = False
             if player == t_board[0]:
                 r = 1
         elif t_board[2] != '⊔' and t_board[2] == t_board[4] and t_board[2] == t_board[6]:
+            if end:
+                self.playing = False
             if player == t_board[2]:
                 r = 1
 
@@ -128,30 +149,46 @@ class Env: # Juego del Gato
         p_board = self.board.copy()
         for n, i in enumerate(p_board):
             if i == '0':
-                p_board[n] = 'X'
+                p_board[n] = '\033[91m' + 'X' + '\033[0m'
             elif i == '1':
-                p_board[n] = 'O'
+                p_board[n] = '\033[94m' + 'O' + '\033[0m'
         return "\n {} | {} | {} \n {} | {} | {} \n {} | {} | {} \n".format(p_board[0], p_board[1], p_board[2], p_board[3],p_board[4], p_board[5], p_board[6] , p_board[7], p_board[8])
 
     def reset(self):
         self.board = ['⊔'] * 9
         self.turn = 0
 
-a = Agent(future_plays = 2)
-e = Env()
+def game(): 
+    a = Agent(future_plays = 2)
+    e = Env(human = False)
 
-while e.playing:
-    print('-- TURNO {} --'.format(e.turn))
-    player = 'X'
-    if e.turn % 2 == 1:
-        player = 'O'
-    print('-- JUEGA {} --'.format(player))
-    # TODO: Si el turno es impar, juega humano
-    t = a.action(state = e, board = e.board, i = a.future_plays, turn = e.turn)
-    e.board[t[0]] = str(e.turn % 2)
-    # TODO: Revisar si ya se acabó el juego
-    # Se incrementa un turno
-    e.turn += 1
-    print(e)
-    print('-- FIN TURNO {} --\n'.format(e.turn -1))
-    print('')
+    while e.playing:
+        # Colores: https://stackoverflow.com/a/287944
+        print('-- TURNO {} --'.format(e.turn))
+        player = '\033[91m' + 'X' + '\033[0m'
+        if e.turn % 2 == 1:
+            player = '\033[94m' + 'O' + '\033[0m'
+        print('-- JUEGA {} --'.format(player))
+        
+        if e.human: 
+            if e.turn % 2 == 0:
+                t = a.action(state = e, board = e.board, i = a.future_plays, turn = e.turn)
+                e.board[t[0]] = str(e.turn % 2)
+            else:
+                pos = int(input('Elige posición: '))
+                e.board[pos] = str(e.turn % 2)
+        else:
+            t = a.action(state = e, board = e.board, i = a.future_plays, turn = e.turn)
+            e.board[t[0]] = str(e.turn % 2)
+        # TODO: Revisar si ya se acabó el juego
+        # Se incrementa un turno
+        e.reward(t_board = e.board, turn = e.turn, end = True)
+        e.turn += 1
+        print(e)
+        print('-- FIN TURNO {} --\n'.format(e.turn -1))
+        print('')
+
+    if input('¿Volver a jugar? S/N: ').lower() == 's':
+        game()
+
+game()
