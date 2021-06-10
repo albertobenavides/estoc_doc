@@ -1,0 +1,96 @@
+\section{Metodología}
+
+Una serie de tiempo $S$ es un conjunto de $n$ observaciones $o$ realizadas en un periodo de tiempo $T$, lo cual puede ser representado como en la tabla \ref{tab:timeseries}. Por su parte, los algoritmos de aprendizaje buscan pronosticar una variable de interés $Y$ a partir de una variable conocida $X$ \cite{Lazzeri2021} a partir de una función tal que $Y = f(X)$, lo cual puede ser visualizado como en la tabla \ref{tab:reinforcement}.
+
+\begin{table}
+    \begin{center}
+        \caption{Ejemplo de representación de serie de tiempo.}
+        \label{tab:timeseries}
+        \begin{tabular}{| c | c |}
+        \hline
+        $T$ & $S$ \\ \hline \hline
+        $t_1$ & $o_1$ \\ \hline
+        $t_2$ & $o_2$ \\ \hline
+        $t_3$ & $o_3$ \\ \hline
+        $\cdots$ & $\cdots$ \\ \hline
+        $t_n$ & $o_n$ \\ \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\begin{table}
+    \begin{center}
+        \caption{Ejemplo de representación de datos para problema de aprendizaje por refuerzo.}
+        \label{tab:reinforcement}
+        \begin{tabular}{| c | c |}
+        \hline
+        $X$ & $Y$ \\ \hline \hline
+        $x_1$ & $y_1$ \\ \hline
+        $x_2$ & $y_2$ \\ \hline
+        $x_3$ & $y_3$ \\ \hline
+        $\cdots$ & $\cdots$ \\ \hline
+        $x_n$ & $y_n$ \\ \hline
+        \end{tabular}
+    \end{center}
+\end{table}
+
+\subsection{Función de desfase}
+Para las series de tiempo univariadas como la del ejemplo de la tabla \ref{tab:timeseries}, el objetivo de la transformación a un problema de aprendizaje por refuerzo es que a partir de cada valor de entrada al tiempo $i$ se pueda aprender por el algoritmo el valor de salida al tiempo $i + 1$, o sea que para cada valor $x_i = o_i$ se tenga una $y_i = o_{i +1}$.
+
+Cuando se tienen dos o más series de tiempo para pronosticar una a partir de otra se suelen utilizar método de análisis multivariados. Es posible también transformar estas series de tiempo a problemas de aprendizaje por refuerzo de modo que a partir de las dos observaciones al tiempo $i$ se pueda aprender la siguiente observación al tiempo $i + 1$ de una o las dos series de tiempo. Un ejemplo de esto se muestra en las tablas \ref{tab:ts-reinforcement}
+
+\begin{table}
+    \caption{Ejemplo de transformación de dos series de tiempo a problema de aprendizaje por refuerzo.}
+    \label{tab:ts-reinforcement}
+    \begin{subtable}{0.45\textwidth}
+        \centering
+        \caption{Ejemplo de dos serie de tiempo}
+        \label{tab:time-example}
+        \begin{tabular}{| c | c | c |}
+            \hline
+            $T$ & $S_1$ & $S_2$  \\ \hline \hline
+            $1$ & $14$  & $0.32$ \\ \hline
+            $2$ & $11$  & $0.15$ \\ \hline
+            $3$ & $23$  & $0.41$ \\ \hline
+            $4$ & $20$  & $0.46$ \\ \hline
+            $5$ & $39$  & $0.45$ \\ \hline
+            \end{tabular}
+    \end{subtable}
+    \hfill
+    \begin{subtable}{0.45\textwidth}
+        \centering
+        \caption{Paso a aprendizaje por refuerzo}
+        \label{tab:time-example}
+        \begin{tabular}{| c | c | c |}
+            \hline
+            $X_1$ & $X_2$  & $Y$  \\ \hline \hline
+            $14$  & $0.32$ & $11$ \\ \hline
+            $11$  & $0.15$ & $23$ \\ \hline
+            $23$  & $0.41$ & $20$ \\ \hline
+            $20$  & $0.46$ & $39$ \\ \hline
+            $39$  & $0.45$ & $ $ \\ \hline
+            \end{tabular}
+    \end{subtable}
+    \hfill
+\end{table}
+
+\subsection{Ventanas de tiempo}
+
+De manera similar a las funciones de desfase, es posible crear ventanas de desfase temporal para series de tiempo univariadas en las que se establezca más de un retraso entre las variables de entrada $X$ para obtener la salida $Y$ deseada. Este procedimiento consiste en aplicar la función de desfase para tantas diferencias temporales $v$ como se especifiquen, de modo que se tengan $v$ variables de entrada $x_{i-v}, x_{i - v + 1}, x_{i - v + 2}, \ldots, , x_{i - 2} , x_{i - 1}$ para pronosticar $y_i$. Estas ventanas implican el descarte de datos para los que no haya $v$ observaciones anteriores. 
+
+Para ilustrar esto, se puede partir de una serie de tiempo $S = \{1, 2, 3, \ldots\}$. Si se elige una ventana $v = 4$, quiere decir que para cada observación $y$ de la serie, se usarán las cuatro observaciones anteriores como valores de entrada $X$. Los primeros $v$ valores se pueden descartar debido a que no tienen suficiente información previa, quedando las variables $X$ y $Y$ como en la tabla \ref{tab:window}.
+
+\begin{table}
+    \begin{center}
+        \caption{Ejemplo de representación de serie de tiempo.}
+        \label{tab:window}
+        \begin{tabular}{| c | c | c | c | c |}
+        \hline
+        $X_1$ & $X_2$ & $X_3$ & $X_4$ & $Y$ \\ \hline \hline
+        $1$   & $2$   & $3$   & $4$   & $5$ \\ \hline
+        $2$   & $3$   & $4$   & $5$   & $6$ \\ \hline
+        $3$   & $4$   & $5$   & $6$   & $7$ \\ \hline
+        $\ldots$   & $\ldots$   & $\ldots$   & $\ldots$   & $\ldots$ \\ \hline
+        \end{tabular}
+    \end{center}
+\end{table}
