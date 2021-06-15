@@ -37,7 +37,7 @@ Una serie de tiempo $S$ es un conjunto de $n$ observaciones $o$ realizadas en un
 \subsection{Función de desfase}
 Para las series de tiempo univariadas como la del ejemplo de la tabla \ref{tab:timeseries}, el objetivo de la transformación a un problema de aprendizaje por refuerzo es que a partir de cada valor de entrada al tiempo $i$ se pueda aprender por el algoritmo el valor de salida al tiempo $i + 1$, o sea que para cada valor $x_i = o_i$ se tenga una $y_i = o_{i +1}$.
 
-Cuando se tienen dos o más series de tiempo para pronosticar una a partir de otra se suelen utilizar método de análisis multivariados. Es posible también transformar estas series de tiempo a problemas de aprendizaje por refuerzo de modo que a partir de las dos observaciones al tiempo $i$ se pueda aprender la siguiente observación al tiempo $i + 1$ de una o las dos series de tiempo. Un ejemplo de esto se muestra en las tablas \ref{tab:ts-reinforcement}
+Cuando se tienen dos o más series de tiempo para pronosticar una a partir de otra se suelen utilizar métodos de análisis multivariados. Es posible también transformar estas series de tiempo a problemas de aprendizaje por refuerzo de modo que a partir de las dos observaciones al tiempo $i$ se pueda aprender la siguiente observación al tiempo $i + 1$ de una o las dos series de tiempo. Un ejemplo de esto se muestra en las tablas \ref{tab:ts-reinforcement}.
 
 \begin{table}
     \caption{Ejemplo de transformación de dos series de tiempo a problema de aprendizaje por refuerzo.}
